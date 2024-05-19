@@ -8,11 +8,11 @@ void Board (char* map)
     // 4 - красный 2 - зеленый 15 - белый 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
     short i, j;
-    system("cls");
+    //system("cls");
     cout << "\n";
 
-    cout << "   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 11| 12| 13| 14| 15" << endl;
-    cout << "---------------------------------------------------------------" << endl;
+    cout << "   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 11| 12| 13| 14| 15\n";
+    cout << "---------------------------------------------------------------\n";
     for (i=0; i<15; i++)
     {
         if (i<9)
@@ -44,7 +44,7 @@ void Board (char* map)
             }
         }
         cout << "\n";
-        if (i != 14) cout << "-------------------------------------------------------------" << endl;
+        if (i != 14) cout << "-------------------------------------------------------------\n";
     }
 }
 
@@ -286,7 +286,6 @@ void Bot(char* map, char com_letter, char us_letter)
     short score_at, score_def, best_score = 0;
     short move[2];
     
-
     for (i=0; i<15; i++)
     {
         for (j=0; j<15; j++)
@@ -305,6 +304,7 @@ void Bot(char* map, char com_letter, char us_letter)
             }
         }
     }
+    cout << move[0] << move[1] << endl;
     *(map+move[1]*15+move[0]) = com_letter;
 }
 
@@ -340,7 +340,7 @@ bool CheckingRules (char* map, short x, short y)
     }
     for (short i=1; i<=4; i++) // -горизонталь
     {
-        if (*(map + (y + i) * 15 + (x - i)) == 'X') count3++; 
+        if (*(map + (y) * 15 + (x - i)) == 'X') count3++; 
         else break;
     }
     for (short i=1; i<=4; i++) // вертикаль
@@ -359,36 +359,40 @@ bool CheckingRules (char* map, short x, short y)
     {
         return false; // Длинный ряд
     }
-    else if (count1 >= 2) 
+    else if (count1 >= 2) // Диагональ 1
     {
         if (count2 >= 2 || count3 >= 2 || count4 >= 2) 
         {
             if (count1 == 2 && (count2 == 3 || count3 == 3 || count4 == 3)) return true; // Вилка 3 на 4
-            return false; // Вилка 3 на 3 или 4 на 4 и тд
+            if (count1 == 3 && (count2 == 2 || count3 == 2 || count4 == 2)) return true;
+            if ((count1+count2+count3+count4)%2==0)return false; // Вилка 3 на 3 или 4 на 4 и тд
         }
     }
-    else if (count2 >= 2)
+    else if (count2 >= 2) // Диагональ 2
     {
         if (count1 >= 2 || count3 >= 2 || count4 >= 2) 
         {
             if (count2 == 2 && (count1 == 3 || count3 == 3 || count4 == 3)) return true; // Вилка 3 на 4
-            return false; // Вилка 3 на 3 или 4 на 4 и тд
+            if (count2 == 3 && (count1 == 2 || count3 == 2 || count4 == 2)) return true;
+            if ((count1+count2+count3+count4)%2==0)return false; // Вилка 3 на 3 или 4 на 4 и тд
         }
     }
-    else if (count3 >= 2)
+    else if (count3 >= 2) // Горизонталь 
     {
         if (count2 >= 2 || count1 >= 2 || count4 >= 2) 
         {
             if (count3 == 2 && (count2 == 3 || count1 == 3 || count4 == 3)) return true; // Вилка 3 на 4
-            return false; // Вилка 3 на 3 или 4 на 4 и тд
+            if (count3 == 3 && (count2 == 2 || count1 == 2 || count4 == 2)) return true;
+            if ((count1+count2+count3+count4)%2==0) return false; // Вилка 3 на 3 или 4 на 4 и тд
         }
     }
-    else if (count4 >= 2)
+    else if (count4 >= 2) // Вертикаль
     {
         if (count2 >= 2 || count3 >= 2 || count1 >= 2) 
         {
             if (count4 == 2 && (count2 == 3 || count3 == 3 || count1 == 3)) return true; // Вилка 3 на 4
-            return false; // Вилка 3 на 3 или 4 на 4 и тд
+            if (count4 == 3 && (count2 == 2 || count3 == 2 || count1 == 2)) return true;
+            if ((count1+count2+count3+count4)%2==0)return false; // Вилка 3 на 3 или 4 на 4 и тд
         }
     }
     
@@ -493,15 +497,16 @@ bool Side()
     }
 }
 
-void Move(char* map, char letter, bool First)
+void Move(char* field, char letter, bool First)
 {
     short i, j; 
-    bool free = true, rules;
+    bool free, rules;
     
     cout << "\n\nEnter the coordinates of the course " << letter << '\n';
     
     do
     {
+        free = true;
         do
         {
             cout << "Enter x: "; // Вводим Х
@@ -526,14 +531,14 @@ void Move(char* map, char letter, bool First)
             }
         } while (i>15 || i<=0);
     
-        if (*(map+(i-1)*15+(j-1)) != '+') // Поле занято
+        if (*(field+(i-1)*15+(j-1)) != '+') // Поле занято
         {
             cout << "The field is occupied by another player\n";
             free = false;
         }
-        else if (letter == 'X' && *(map+(i-1)*15+(j-1)) == '+' )
+        else if (letter == 'X' && *(field+(i-1)*15+(j-1)) == '+' )
         {
-            rules = CheckingRules (map, j, i);
+            rules = CheckingRules (field, j-1, i-1);
             if (!rules)
             {
                 cout <<"The move violates the rules of the game"<< endl;
@@ -552,7 +557,7 @@ void Move(char* map, char letter, bool First)
 
     } while (!free);
 
-    *(map+(i-1)*15+(j-1)) = letter;
+    *(field+(i-1)*15+(j-1)) = letter;
 }
 
 void StartBoard(char* map)
