@@ -1,7 +1,6 @@
 #include <iostream>
 #include "score.hpp"
 #include "main.hpp"
-
 using namespace std;
 
 int main ()
