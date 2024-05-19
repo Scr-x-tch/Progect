@@ -84,6 +84,5 @@ bool CheckingRules (char* map, short x, short y)
             return false; // Вилка 3 на 3 или 4 на 4 и тд
         }
     }
-
-    return true;
+    else return true;
 }
