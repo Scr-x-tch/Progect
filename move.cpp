@@ -2,15 +2,16 @@
 #include "Check.hpp"
 using namespace std;
 
-void Move(char* map, char letter, bool First)
+void Move(char* field, char letter, bool First)
 {
     short i, j; 
-    bool free = true, rules;
+    bool free, rules;
     
     cout << "\n\nEnter the coordinates of the course " << letter << '\n';
     
     do
     {
+        free = true;
         do
         {
             cout << "Enter x: "; // Вводим Х
@@ -35,14 +36,14 @@ void Move(char* map, char letter, bool First)
             }
         } while (i>15 || i<=0);
     
-        if (*(map+(i-1)*15+(j-1)) != '+') // Поле занято
+        if (*(field+(i-1)*15+(j-1)) != '+') // Поле занято
         {
             cout << "The field is occupied by another player\n";
             free = false;
         }
-        else if (letter == 'X' && *(map+(i-1)*15+(j-1)) == '+' )
+        else if (letter == 'X' && *(field+(i-1)*15+(j-1)) == '+' )
         {
-            rules = CheckingRules (map, j, i);
+            rules = CheckingRules (field, j-1, i-1);
             if (!rules)
             {
                 cout <<"The move violates the rules of the game"<< endl;
@@ -61,5 +62,5 @@ void Move(char* map, char letter, bool First)
 
     } while (!free);
 
-    *(map+(i-1)*15+(j-1)) = letter;
+    *(field+(i-1)*15+(j-1)) = letter;
 }
