@@ -1,0 +1,1 @@
+bool CheckingRules (char* map, short x, short y);

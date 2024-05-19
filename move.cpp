@@ -1,10 +1,11 @@
 #include <iostream>
+#include "Check.hpp"
 using namespace std;
 
 void Move(char* map, char letter, bool First)
 {
     short i, j; 
-    bool free = true;
+    bool free = true, rules;
     
     cout << "\n\nEnter the coordinates of the course " << letter << '\n';
     
@@ -12,7 +13,7 @@ void Move(char* map, char letter, bool First)
     {
         do
         {
-            cout << "Enter x: ";
+            cout << "Enter x: "; // Вводим Х
             cin >> j;
             if (j>15 || j<=0)
             {
@@ -24,7 +25,7 @@ void Move(char* map, char letter, bool First)
 
         do 
         {
-            cout << "Enter y: ";
+            cout << "Enter y: "; // Вводим У
             cin >> i;
             if (i>=15 || i<=0)
             {
@@ -34,12 +35,20 @@ void Move(char* map, char letter, bool First)
             }
         } while (i>15 || i<=0);
     
-        if (*(map+(i-1)*15+(j-1)) != '+')
+        if (*(map+(i-1)*15+(j-1)) != '+') // Поле занято
         {
             cout << "The field is occupied by another player\n";
             free = false;
         }
-        else free = true;
+        else if (letter == 'X' && *(map+(i-1)*15+(j-1)) == '+' )
+        {
+            rules = CheckingRules (map, j, i);
+            if (!rules)
+            {
+                cout <<"The move violates the rules of the game"<< endl;
+                free = false;
+            }
+        }
 
         if (First)
         {
